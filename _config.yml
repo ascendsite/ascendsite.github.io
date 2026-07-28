@@ -1,0 +1,14 @@
+title: Ascend SMP
+description: Minecraft SMP Website
+
+collections:
+  pages:
+    output: true
+    permalink: /:path/
+
+defaults:
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: default
