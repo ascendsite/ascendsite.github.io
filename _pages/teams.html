@@ -63,12 +63,12 @@ permalink: /teams
     </div>
 
     <script>
-        // Try the live API first (works for local dev over HTTP).
-        // On GitHub Pages (HTTPS) the browser blocks plain-HTTP requests
-        // (mixed content), so we fall back to a locally-cached JSON file
-        // that a GitHub Action updates every 10 minutes.
+        // On GitHub Pages (HTTPS), browsers block plain-HTTP requests (mixed content).
+        // On localhost (HTTP), we can reach the live API directly.
+        // We detect the protocol and only attempt the live API when on HTTP.
         const API_URL = 'http://209.102.254.95:8081';
         const LOCAL_DATA = '/assets/teams.json';
+        const isSecureContext = location.protocol === 'https:';
         let teamsData = [];
 
         async function fetchWithTimeout(url, ms = 10000) {
@@ -84,22 +84,26 @@ permalink: /teams
 
         async function loadTeams() {
             let liveData = null;
-            let liveError = null;
 
-            // 1) Try the live API first
-            try {
-                const res = await fetchWithTimeout(API_URL + '/api/teams');
-                if (res.ok) {
-                    liveData = await res.json();
+            // Only try the live API over HTTP (localhost dev).
+            // On HTTPS (GitHub Pages), skip it entirely since browsers block mixed content.
+            if (!isSecureContext) {
+                try {
+                    const res = await fetchWithTimeout(API_URL + '/api/teams');
+                    if (res.ok) {
+                        liveData = await res.json();
+                    }
+                } catch (err) {
+                    console.log('Live API unreachable on HTTP, using cached data:', err);
                 }
-            } catch (err) {
-                liveError = err;
+            } else {
+                console.log('HTTPS detected — using cached teams data to avoid mixed content blocking.');
             }
 
-            // 2) Try the cached local file
+            // Load the cached local file (works on both HTTP and HTTPS)
             let cachedData = null;
             try {
-                const res = await fetchWithTimeout(LOCAL_DATA);
+                const res = await fetch(LOCAL_DATA);
                 if (res.ok) {
                     cachedData = await res.json();
                 }
