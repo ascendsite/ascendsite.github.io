@@ -1,1 +1,20 @@
-
+[
+  {
+    "id": "dfddf7be",
+    "name": "aaa",
+    "description": "No description set.",
+    "leader": "recriminatory",
+    "players": [
+      "recriminatory"
+    ],
+    "points": 0.0,
+    "playerStats": [
+      {
+        "name": "recriminatory",
+        "kills": 0,
+        "deaths": 0
+      }
+    ],
+    "created": "August 4, 2026"
+  }
+]
